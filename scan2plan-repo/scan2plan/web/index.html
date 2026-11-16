@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scan2plan · 户型编辑器</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">◱</span>
+    <span class="title">scan2plan</span>
+    <span class="sub">室内扫描 → 可编辑户型图</span>
+  </div>
+  <div class="tools">
+    <select id="sampleSel" title="载入内置样例">
+      <option value="apartment">样例：两室两厅 80m²</option>
+      <option value="two">样例：两房共墙</option>
+      <option value="lshape">样例：L 形房间</option>
+      <option value="single">样例：单房间</option>
+    </select>
+    <button id="btnLoad" title="打开 .s2p.json 工程文件">打开</button>
+    <input type="file" id="fileInput" accept=".json,.s2p" hidden>
+    <span class="sep"></span>
+    <button id="btnUndo" title="撤销 (Ctrl+Z)">↶ 撤销</button>
+    <button id="btnRedo" title="重做 (Ctrl+Shift+Z)">↷ 重做</button>
+    <span class="sep"></span>
+    <div class="modes" id="modeGroup">
+      <button class="mode active" data-mode="select" title="选择/编辑 (V)">选择</button>
+      <button class="mode" data-mode="wall" title="画墙 (W)">画墙</button>
+      <button class="mode" data-mode="door" title="加门 (D)">加门</button>
+      <button class="mode" data-mode="window" title="加窗 (N)">加窗</button>
+    </div>
+    <span class="sep"></span>
+    <label class="chk"><input type="checkbox" id="chkDims" checked> 尺寸</label>
+    <label class="chk"><input type="checkbox" id="chkRooms" checked> 房间</label>
+    <label class="chk"><input type="checkbox" id="chkGrid" checked> 网格</label>
+    <label class="chk"><input type="checkbox" id="chkOrtho" checked> 正交吸附</label>
+  </div>
+  <div class="exports">
+    <button class="primary" id="btnExportDxf">导出 DXF</button>
+    <button id="btnExportIfc">IFC</button>
+    <button id="btnExportGlb">GLB</button>
+    <button id="btnExportObj">OBJ</button>
+    <button id="btnExportFbx">FBX</button>
+    <button id="btnSaveProject">保存工程</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="viewport" id="viewport2d">
+    <canvas id="canvas2d"></canvas>
+    <div class="hud" id="hud2d">
+      <span id="cursorInfo">x 0.00  y 0.00</span>
+      <span class="hudsep"></span>
+      <span id="zoomInfo">100%</span>
+      <span class="hudsep"></span>
+      <span>滚轮缩放 · 空格/中键拖动平移 · Del 删除</span>
+    </div>
+    <div class="badge" id="badge2d">2D 平面图</div>
+  </section>
+
+  <div class="splitter" id="splitter" title="拖动调整视图比例"></div>
+
+  <section class="viewport" id="viewport3d">
+    <canvas id="canvas3d"></canvas>
+    <div class="badge">3D 预览（拖拽旋转 · 滚轮缩放）</div>
+    <div class="hud" id="hud3d"><span id="triInfo">—</span></div>
+  </section>
+</main>
+
+<aside class="side">
+  <div class="panel" id="panel-select">
+    <h3>属性</h3>
+    <div class="empty" id="selEmpty">未选中对象。点击墙体 / 墙角 / 门窗 / 房间。</div>
+    <div id="selBody" hidden></div>
+  </div>
+
+  <div class="panel">
+    <h3>房间 <span class="muted" id="roomTotal"></span></h3>
+    <div id="roomList" class="room-list"></div>
+  </div>
+
+  <div class="panel">
+    <h3>统计</h3>
+    <table class="stats" id="statsTable"></table>
+  </div>
+
+  <div class="panel">
+    <h3>导出记录</h3>
+    <div id="exportLog" class="log"></div>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<div class="statusbar">
+  <span>单位 <b>m</b></span>
+  <span>Y 轴向上（CAD 习惯）</span>
+  <span id="statusSel">—</span>
+  <span style="margin-left:auto" id="statusWarn"></span>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scan2plan"
+version = "0.1.0"
+description = "手机室内扫描 → 可编辑户型图 → DXF / IFC / GLB / OBJ / FBX"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "scan2plan" }]
+keywords = ["floorplan", "arcore", "point-cloud", "dxf", "ifc", "gltf", "bim", "cad"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Multimedia :: Graphics :: 3D Modeling",
+]
+
+# 生产依赖只有 numpy。5 种导出器、几何内核、Web 服务全部手写，零重依赖。
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+# 仅用于交叉校验（可选）：用第三方库独立验证我们手写的 DXF/IFC/GLB 是否合法。
+validate = ["ezdxf>=1.3", "trimesh>=4.0", "ifcopenshell>=0.7"]
+dev = ["ezdxf>=1.3", "trimesh>=4.0"]
+
+[project.scripts]
+scan2plan = "scan2plan.cli:main"
+
+[tool.setuptools]
+packages = ["scan2plan", "scan2plan.exporters", "scan2plan.reconstruct"]
+
+[tool.setuptools.package-data]
+scan2plan = ["web/*.html", "web/*.css", "web/*.js"]
